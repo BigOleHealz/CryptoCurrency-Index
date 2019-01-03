@@ -3,24 +3,20 @@ import datetime
 import numpy
 import requests
 import json
-# import MySQLdb
 import pymysql
 import threading
 import pandas as pd
 from datetime import datetime
-from operator import itemgetter
 from pandas.io.json import json_normalize
-from sqlalchemy import create_engine
 
 pd.set_option('display.max_rows', 100)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
-
 class BigOlDB:
 
 	def __init__(self):
-		self.db, self.cursor, self.engine = self.db_connect()
+		self.db, self.cursor = self.db_connect()
 
 	def db_connect(self):
 		endpoint =  "mastertable.cxnyjlbkj9eg.us-east-2.rds.amazonaws.com"
@@ -31,10 +27,7 @@ class BigOlDB:
 		db = pymysql.connect(endpoint, username, password, dbname)
 		cursor = db.cursor()
 
-
-		engine = create_engine('sqlite://', echo=False)
-
-		return db, cursor, engine
+		return db, cursor
 
 	### ISSUE: should only retrieve tracked coins
 	def get_updated_quotes(self, quote_limit=10):
@@ -82,6 +75,7 @@ class BigOlDB:
 
 		return df	
 
+	### MUST BE UPGRADED AND DELETED ###
 	def sql_insert_to_minutely(self, dff):
 
 		for i, row in dff.iterrows():
@@ -96,6 +90,7 @@ class BigOlDB:
 				print(sql)
 				pass
 
+	### MUST BE UPGRADED AND DELETED ###
 	def sql_insert_to_sector_minutely(self, dff):
 		for i, row in dff.iterrows():
 			try:
