@@ -70,7 +70,7 @@ class BigOlDB:
 		sql = "SELECT TimeStampID, Price_USD, Price_BTC, MarketCap_USD, \
 			Volume24hr_USD FROM	minutely_data WHERE Ticker = '{}'".format(ticker)
 		self.cursor.execute(sql)
-		df = pd.DataFrame(list(self.cursor.fetchall()), columns=["TimeStamp",
+		df = pd.DataFrame(list(self.cursor.fetchall()), columns=["TimeStampID",
 			"Price_USD", "Price_BTC", "MarketCap_USD", "Volume24hr_USD"])
 
 		return df	
@@ -144,6 +144,3 @@ class BigOlDB:
 		df_coin_quotes["Price_BTC"] = df_coin_quotes["Price_USD"] / price_btc
 
 		self.sql_insert_to_sector_minutely(df_coin_quotes)
-
-
-
