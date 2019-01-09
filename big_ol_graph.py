@@ -1,6 +1,6 @@
-from BigOlDB import BigOlDB
+#!/usr/bin/env python3
+from big_ol_db import BigOlDB
 import matplotlib.pyplot as plt, matplotlib.ticker as mticker, matplotlib.dates as mdates, time, datetime, numpy as np, matplotlib, MySQLdb
-from CoinClassifications import CoinClassifications
 from mpl_finance import candlestick_ohlc as candlestick
 
 matplotlib.rcParams.update({'font.size': 9})
