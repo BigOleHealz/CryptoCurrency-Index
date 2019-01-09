@@ -8,6 +8,8 @@ import threading
 import pandas as pd
 from datetime import datetime
 from pandas.io.json import json_normalize
+import logging
+import credentials
 
 pd.set_option('display.max_rows', 100)
 pd.set_option('display.max_columns', 500)
@@ -16,13 +18,18 @@ pd.set_option('display.width', 1000)
 class BigOlDB:
 
 	def __init__(self):
+		logging.info("Initializing Big Ol DB")
 		self.db, self.cursor = self.db_connect()
 
 	def db_connect(self):
-		endpoint =  "mastertable.cxnyjlbkj9eg.us-east-2.rds.amazonaws.com"
-		username = "root"
-		dbname = "coinindexcap"
-		password = "Healyisadumbcunt"
+		logging.info("Connecting to DB")
+
+		cred = credentials.credentials_dict
+
+		endpoint =  cred['endpoint']
+		username = cred['username']
+		dbname = cred['dbname']
+		password = cred['password']
 
 		db = pymysql.connect(endpoint, username, password, dbname)
 		cursor = db.cursor()
