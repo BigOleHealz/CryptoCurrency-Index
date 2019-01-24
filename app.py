@@ -82,9 +82,20 @@ def update_graph(ticker, currency_type, requested_mas):
                 'tickfont': style_dicts.tick_font,
                 'exponentformat': 'e',
                 'showexponent': 'all',
-                'range': [y_min, y_max],
+                # 'range': [y_min, y_max],
                 'side': 'left'
             },
+            # yaxis2={
+            #     'title': "{} Price - {}".format(ticker, currency_type),
+            #     'type': 'linear',
+            #     'titlefont': style_dicts.axis_label_font,
+            #     'tickfont': style_dicts.tick_font,
+            #     'exponentformat': 'e',
+            #     'showexponent': 'all',
+            #     # 'range': [y_min, y_max],
+            #     'overlaying': 'y',
+            #     'side': 'right'
+            # },
             margin=style_dicts.graph_margins,
             hovermode='closest',
             plot_bgcolor=style_dicts.colors['background'],
@@ -100,12 +111,4 @@ def update_graph(ticker, currency_type, requested_mas):
 
 
 if __name__ == '__main__':
-    app.run_server(port=8070, debug=True)
-
-
-
-
-
-
-
-
+    app.run_server(port=8072, debug=True)

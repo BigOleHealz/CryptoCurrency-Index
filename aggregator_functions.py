@@ -31,18 +31,19 @@ def get_traces(df, currency_type, requested_mas, short_window=25, long_window=70
 					'width': 2.5
 					},
 				name='Price {}'.format(currency_type)),
-			go.Scatter(
-				x=df['TimeStampID'],
-				y=scale_volume(df),
-				mode='lines',
-				name='24hr Volume - USD',
-				fill='tozeroy',
-				line={
-					'color': style_dicts.colors['volume_line'],
-					'width': 1
-					},
-				fillcolor=style_dicts.colors['volume_fill'] #'rgba(26,150,65,0.5)'
-				)]
+			# go.Scatter(
+			# 	x=df['TimeStampID'],
+			# 	y=scale_volume(df),
+			# 	mode='lines',
+			# 	name='24hr Volume - USD',
+			# 	fill='tozeroy',
+			# 	line={
+			# 		'color': style_dicts.colors['volume_line'],
+			# 		'width': 1
+			# 		},
+			# 	fillcolor=style_dicts.colors['volume_fill'] #'rgba(26,150,65,0.5)'
+			# 	)
+			]
 
 	if 'sma' in requested_mas:
 		data.append(go.Scatter(
@@ -68,6 +69,3 @@ def get_traces(df, currency_type, requested_mas, short_window=25, long_window=70
 		)
 
 	return data, price_min, price_max
-
-
-
