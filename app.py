@@ -4,7 +4,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
-from styles import style_dicts
+from constants import style_dicts
 import aggregator_functions as agg
 from big_ol_db import BigOlDB
 from argparse import ArgumentParser
@@ -22,7 +22,8 @@ app.layout = html.Div([
         html.Div([
             dcc.Dropdown(
                 id='coin-ticker',
-                options=[{'label': row["Ticker"], 'value': row["Ticker"]} for i, row in df_supported_coins.iterrows()],
+                options=[{'label': row["Ticker"], 'value': row["Ticker"]} \
+                    for i, row in df_supported_coins.iterrows()],
                 value='BTC'
             )]),
         html.Div([
@@ -50,21 +51,30 @@ app.layout = html.Div([
     ], 
     style={'backgroundColor':style_dicts.colors['background']}),
 
+    html.Div([
+            dcc.Checklist(
+                id='candlestick',
+                options=[{'label': 'Candlestick', 'value': 'candlestick'}],
+                values=[True],
+                labelStyle={'display': 'inline-block'}
+            )
+        ]), 
+
     dcc.Graph(id='indicator-graphic')], 
-    style={'backgroundColor':style_dicts.colors['background']}
 )
 
 @app.callback(
     dash.dependencies.Output('indicator-graphic', 'figure'),
     [dash.dependencies.Input('coin-ticker', 'value'),
      dash.dependencies.Input('currency-type', 'value'),
-     dash.dependencies.Input('checklist-average', 'values') ])
-def update_graph(ticker, currency_type, requested_mas):
+     dash.dependencies.Input('checklist-average', 'values'),
+     dash.dependencies.Input('candlestick', 'values')])
+def update_graph(ticker, currency_type, requested_mas, candlestick):
 
     quotes = bodb.get_minutely_coin_data(ticker)
 
-    fig = agg.get_fig(quotes, currency_type, requested_mas, 
-                            short_window=60, long_window=200)
+    fig = agg.get_fig(ticker, quotes, currency_type, requested_mas, 
+                    candlestick=candlestick, short_window=60, long_window=200)
 
     return fig
 
