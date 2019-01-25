@@ -7,6 +7,7 @@ import plotly.graph_objs as go
 from styles import style_dicts
 import aggregator_functions as agg
 from big_ol_db import BigOlDB
+from argparse import ArgumentParser
 
 external_stylesheets = ['styles/style_sheet.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -62,53 +63,16 @@ def update_graph(ticker, currency_type, requested_mas):
 
     quotes = bodb.get_minutely_coin_data(ticker)
 
-    data, y_min, y_max = agg.get_traces(quotes, currency_type, requested_mas, 
+    fig = agg.get_fig(quotes, currency_type, requested_mas, 
                             short_window=60, long_window=200)
 
-    layout = go.Layout(
-            xaxis={
-                'title': 'Date/Time',
-                'showticklabels': True,
-                'titlefont': style_dicts.axis_label_font,
-                'tickfont': style_dicts.tick_font,
-                'exponentformat': 'e',
-                'showexponent': 'all',
-                # 'type': 'linear' if xaxis_type == 'Linear' else 'log'
-            },
-            yaxis={
-                'title': "{} Price - {}".format(ticker, currency_type),
-                'type': 'linear',
-                'titlefont': style_dicts.axis_label_font,
-                'tickfont': style_dicts.tick_font,
-                'exponentformat': 'e',
-                'showexponent': 'all',
-                # 'range': [y_min, y_max],
-                'side': 'left'
-            },
-            # yaxis2={
-            #     'title': "{} Price - {}".format(ticker, currency_type),
-            #     'type': 'linear',
-            #     'titlefont': style_dicts.axis_label_font,
-            #     'tickfont': style_dicts.tick_font,
-            #     'exponentformat': 'e',
-            #     'showexponent': 'all',
-            #     # 'range': [y_min, y_max],
-            #     'overlaying': 'y',
-            #     'side': 'right'
-            # },
-            margin=style_dicts.graph_margins,
-            hovermode='closest',
-            plot_bgcolor=style_dicts.colors['background'],
-            paper_bgcolor=style_dicts.colors['background'],
-            legend=style_dicts.legend_format,
-        )
-
-
-    return {
-        'data': data,
-        'layout': layout
-    }
+    return fig
 
 
 if __name__ == '__main__':
-    app.run_server(port=8072, debug=True)
+    parser = ArgumentParser()
+    parser.add_argument('-p', '--port_number', dest='port_number',
+        help='Enter a fucking port number', default=8050)
+    args = parser.parse_args()
+
+    app.run_server(port=args.port_number, debug=True)
