@@ -1,24 +1,24 @@
 base_colors = {
 'white': '#FFFFFF',
 'grey': '#777777',
-'black': '#000000'
+'black': '#000000',
+'transparent': 'rgba(0,0,0,0)',
 }
 
 colors = {
 	'background': '#070008',
+	'title_font': base_colors['white'],
+
+	'rsi': '#00ffff',
+	'rsi_highlow': '#00ffe8',
+
 	'current_price_line': '#5998FF',
-	'volume_line': '#59B8BF',
-	'volume_fill': 'rgba(25,280,255,0.5)',
 	'sma_line': '#11FFCC',
 	'lma_line': '#FFA500',
-	'title_font': base_colors['white'],
-	'transparent': 'rgba(0,0,0,0)',
 	'legend_bg': base_colors['grey'],
-	'candlestick': {
-		'increasing': '#FFFF00',
-		'decreasing': '#3D00FF'
-		}
-	
+
+	'volume_line': '#59B8BF',
+	'volume_fill': 'rgba(25,280,255,0.5)',
 }
 
 axis_label_font = {
@@ -38,7 +38,21 @@ graph_layout = {
 		'l': 60, 
 		'b': 45, 
 		't': 25, 
-		'r': 0
+		'r': 0,
+		'pad': 4
 	},
-	'tickangle': -30
+	'tickangle': -30,
+	'domains': {
+		'y2_top': 0.8,
+		'y2_bottom': 0.2,
+		'padding': 0.03
+	},
+	'line_width': {
+		'rsi': 2,
+		'rsi_lowhigh': 1.25,
+		'current_price': 2.5,
+		'avg_price': 1.25,
+
+		'volume': 1.5
+	}
 }

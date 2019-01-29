@@ -65,13 +65,25 @@ def get_fig(ticker, df, currency_type, requested_mas, candlestick,
 
 	if candlestick:
 		dff = refactor_to_ohlc(df, currency_type)
-		trace_price = go.Ohlc(x=dff['TimeStamp'],
+		trace_price = go.Candlestick(x=dff['TimeStamp'],
                 open=dff['Open'],
                 high=dff['High'],
                 low=dff['Low'],
                 close=dff['Close'],
                 name='OHLC',
-				)
+                increasing={
+                	'line': {
+                		'color': '#FFFF00'
+            			},
+            		'fillcolor': '#3D00FF'
+            		},
+            	decreasing={
+                	'line': {
+                		'color': '#3D00FF'
+            			},
+            		'fillcolor': '#3D00FF'
+            		},
+			)
 
 	else:
 		trace_price = go.Scatter(
@@ -134,6 +146,8 @@ def get_fig(ticker, df, currency_type, requested_mas, candlestick,
 
 	fig['layout'].update(title='Stacked Subplots with Shared X-Axes',
 		autosize=True,
+		height=800,
+		width=1450,
 		paper_bgcolor=styles.base_colors['transparent'],
 	    plot_bgcolor=styles.base_colors['transparent'],
 	    titlefont={'color': styles.colors['title_font']},
@@ -149,7 +163,6 @@ def get_fig(ticker, df, currency_type, requested_mas, candlestick,
 	    	'tickangle': styles.graph_layout['tickangle'],
 	    	'domain':[styles.graph_layout['domains']['y2_top'] + \
 	    		styles.graph_layout['domains']['padding'], 1]
-	    	# 'anchor': 'y2'
 	    	},
 	    yaxis2={
 	    	'color': styles.base_colors['white'],
