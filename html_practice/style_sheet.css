@@ -1,0 +1,45 @@
+
+
+body {
+  background-color: #081414;
+}
+h1 {
+  color: white;
+  font-family: verdana;
+  font-size: 200%;
+}
+p {
+  color: red;
+  font-family: courier;
+  font-size: 160%;
+  border: 1px solid powderblue;
+  padding: 30px;
+  margin: 50px;
+}
+
+.checkbox {
+	color: white;
+	font-family: verdana;
+	font-size: 75%;
+	padding-top: 5px;
+}
+
+.radiobutton {
+	color: white;
+	font-family: verdana;
+	font-size: 75%;
+	padding-top: 3px;
+}
+
+.graph {
+	display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
+  padding-top: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 900px;
+  height: 350px;
+  border: 0.5px solid powderblue;
+}
