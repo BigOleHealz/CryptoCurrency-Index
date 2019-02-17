@@ -321,6 +321,6 @@ there.
 }
 
 body {
-  background: black !important;
-  color: white !important;
+  background-color: black;
+  color: white;
 }
