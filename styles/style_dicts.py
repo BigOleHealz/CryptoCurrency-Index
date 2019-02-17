@@ -13,7 +13,12 @@ colors = {
 	'lma_line': '#FFA500',
 	'title_font': base_colors['white'],
 	'transparent': 'rgba(0,0,0,0)',
-	'legend_bg': base_colors['grey']
+	'legend_bg': base_colors['grey'],
+	'candlestick': {
+		'increasing': '#FFFF00',
+		'decreasing': '#3D00FF'
+		}
+	
 }
 
 axis_label_font = {
