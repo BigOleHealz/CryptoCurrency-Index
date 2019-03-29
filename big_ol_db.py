@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 import datetime
-import numpy
-import requests
-import json
-import pymysql
-import threading
-import pandas as pd
 from datetime import datetime
 from pandas.io.json import json_normalize
-import logging
-import credentials
+import logging, hashlib, threading, pymysql, json, requests, numpy as np, pandas as pd
+from credentials import credentials
+import static.flash_messages as fl_mes
+
+import random
 
 pd.set_option('display.max_rows', 100)
 pd.set_option('display.max_columns', 500)
@@ -24,12 +21,10 @@ class BigOlDB:
 	def db_connect(self):
 		logging.info("Connecting to DB")
 
-		cred = credentials.credentials_dict
-
-		endpoint =  cred['endpoint']
-		username = cred['username']
-		dbname = cred['dbname']
-		password = cred['password']
+		endpoint =  credentials['endpoint']
+		username = credentials['username']
+		dbname = credentials['dbname']
+		password = credentials['password']
 
 		db = pymysql.connect(endpoint, username, password, dbname)
 		cursor = db.cursor()
@@ -87,7 +82,7 @@ class BigOlDB:
 
 		for i, row in dff.iterrows():
 			try:
-				sql = """insert into minutely_data VALUES(null, '%s', '%s',
+				sql = """INSERT INTO minutely_data VALUES(null, '%s', '%s',
 					'%s', '%s', '%s', '%s')""" % (row["Ticker"], 
 					row["TimeStampID"], row["Price_USD"], row["Price_BTC"], 
 					row["MarketCap_USD"], row["Volume24hr_USD"])
@@ -101,7 +96,7 @@ class BigOlDB:
 	def sql_insert_to_sector_minutely(self, dff):
 		for i, row in dff.iterrows():
 			try:
-				sql = """insert into sector_minutely_data VALUES(null, '%s', '%s',
+				sql = """INSERT INTO sector_minutely_data VALUES(null, '%s', '%s',
 					'%s', '%s', '%s', '%s')""" % (row["Sector"], 
 					row["TimeStampID"], row["Price_USD"], row["Price_BTC"], 
 					row["MarketCap_USD"], row["MarketCap_BTC"])
@@ -112,7 +107,7 @@ class BigOlDB:
 				pass
 
 	def get_multipliers(self):
-		sql = "select sectorTicker, multiplier from sectors"
+		sql = "SELECT sectorTicker, multiplier FROM sectors"
 		self.cursor.execute(sql)
 		result = pd.DataFrame(list(self.cursor.fetchall()), columns=[
 			"SectorTicker", "Multiplier"])
@@ -151,3 +146,51 @@ class BigOlDB:
 		df_coin_quotes["Price_BTC"] = df_coin_quotes["Price_USD"] / price_btc
 
 		self.sql_insert_to_sector_minutely(df_coin_quotes)
+
+	def existing_account(self, email, username):
+		sql = "SELECT email, username FROM coinindexcap.users"
+		self.cursor.execute(sql)
+
+		df = pd.DataFrame(list(self.cursor.fetchall()), 
+			columns=['email', 'username'])
+
+		if email in list(df['email']):
+			return fl_mes.email_already_exists
+		elif username in list(df['username']):
+			return fl_mes.username_already_exists
+		else:
+			return False
+
+
+
+	def validate_user(self, email, password):
+		hashed_password = hashlib.md5(password.encode()).hexdigest()
+		sql = "SELECT email, password FROM coinindexcap.users WHERE email = '{}'".format(email)
+		self.cursor.execute(sql)
+
+		if self.cursor.rowcount == 0:
+			return  fl_mes.email_not_in_db
+		
+		raw_tuple = self.cursor.fetchone()
+		record = pd.Series({"email": raw_tuple[0], "password": raw_tuple[1]})
+
+		if hashed_password == record['password']:
+			return True
+		else:
+			return fl_mes.wrong_password
+
+	def register_user(self, email, username, password, first_name, last_name, private_key='NULL'):
+		hashed_password = hashlib.md5(password.encode()).hexdigest()
+		timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+		sql = "INSERT INTO coinindexcap.users VALUES(NULL, '{em}', '{pw}', '{un}', '{pk}', 'user', '{ac}', '{fn}', '{ln}')".format(
+			em=email, un=username, pw=hashed_password, pk=random.randint(1,101), ac=timestamp,
+			fn=first_name, ln=last_name)
+
+		try:
+			self.cursor.execute(sql)
+			self.db.commit()
+
+			return True
+		except Exception as e:
+			return e
