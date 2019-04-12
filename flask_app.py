@@ -1,11 +1,9 @@
 from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm, LoginForm
 from big_ol_db import BigOlDB
-from flask_nav import Nav
-from flask_nav.elements import Navbar, Subgroup, View, Link, Separator, Text
-from datetime import datetime
 import pymysql, hashlib, pandas as pd, logging, static.flash_messages as fl_mes
 
+import graph_functions as gf
 import numpy as np, json, plotly
 import plotly.graph_objs as go
 
@@ -13,16 +11,9 @@ import plotly.graph_objs as go
 app = Flask(__name__)
 
 
-
 app.secret_key = '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
 
 bodb = BigOlDB()
-
-
-
-
-
-
 
 
 @app.route("/")
@@ -39,48 +30,24 @@ def about():
 
 
 
-@app.route('/index')
+@app.route('/dashboard')
 def index():
-    feature = 'Bar'
-    bar = create_plot(feature)
-    return render_template('index.html', plot=bar)
+	feature = 'Notbar'
+	
+	ticker='BTC'
+	figure = gf.create_plot(feature, ticker)
 
-def create_plot(feature):
-    if feature == 'Bar':
-        N = 40
-        x = np.linspace(0, 1, N)
-        y = np.random.randn(N)
-        df = pd.DataFrame({'x': x, 'y': y}) # creating a sample dataframe
-        data = [
-            go.Bar(
-                x=df['x'], # assign x as the dataframe column 'x'
-                y=df['y']
-            )
-        ]
-    else:
-        N = 1000
-        random_x = np.random.randn(N)
-        random_y = np.random.randn(N)
-
-        # Create a trace
-        data = [go.Scatter(
-            x = random_x,
-            y = random_y,
-            mode = 'markers'
-        )]
+	return render_template('dashboard.html', plot=figure['data'], layout=figure['layout'])
 
 
-    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return graphJSON
 
 @app.route('/bar', methods=['GET', 'POST'])
 def change_features():
+	ticker='BTC'
+	feature = request.args['selected']
+	graphJSON= gf.create_plot(feature, ticker)
 
-    feature = request.args['selected']
-    graphJSON= create_plot(feature)
-
-    return graphJSON
+	return graphJSON
 
 
 
