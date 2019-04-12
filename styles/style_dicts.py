@@ -17,7 +17,8 @@ colors = {
 	'candlestick': {
 		'increasing': '#FFFF00',
 		'decreasing': '#3D00FF'
-		}
+	},
+	'rsi': '#00ffe8'
 	
 }
 
@@ -40,5 +41,5 @@ graph_layout = {
 		't': 25, 
 		'r': 0
 	},
-	'tickangle': -30
+	'tickangle': -30,
 }
