@@ -14,6 +14,7 @@ app = Flask(__name__)
 app.secret_key = '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
 
 bodb = BigOlDB()
+coins = bodb.get_supported_coins()
 
 
 @app.route("/")
@@ -32,12 +33,12 @@ def about():
 
 @app.route('/dashboard')
 def index():
-	feature = 'Notbar'
+	feature = 'BTC'
 	
-	ticker='BTC'
-	figure = gf.create_plot(feature, ticker)
+	figure = gf.create_plot(feature)
 
-	return render_template('dashboard.html', plot=figure['data'], layout=figure['layout'])
+
+	return render_template('dashboard.html', plot=figure['data'], layout=figure['layout'], coins=coins['Ticker'])
 
 
 

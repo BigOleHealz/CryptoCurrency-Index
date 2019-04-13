@@ -4,26 +4,19 @@ from big_ol_db import BigOlDB
 import plotly.graph_objs as go
 import styles.style_dicts as styles
 
-def create_plot(feature, ticker):
+def create_plot(feature):
 	bodb = BigOlDB()
-	df = bodb.get_minutely_coin_data(ticker)
+	df = bodb.get_minutely_coin_data(feature)
 
-
-	if feature == 'Bar':
-		trace_price = go.Bar(
-			x=df['TimeStampID'],
-			y=df['Price_USD']
-		)
-	else:
-		dff = refactor_to_ohlc(df, currency_type='USD')
-		trace_price = go.Candlestick(
-			x=dff['TimeStamp'],
-			open=dff['Open'],
-			high=dff['High'],
-			low=dff['Low'],
-			close=dff['Close'],
-			name='OHLC'
-		)
+	dff = refactor_to_ohlc(df, currency_type='USD')
+	trace_price = go.Candlestick(
+		x=dff['TimeStampID'],
+		open=dff['Open'],
+		high=dff['High'],
+		low=dff['Low'],
+		close=dff['Close'],
+		name='OHLC'
+	)
 
 	trace_rsi = go.Scatter(
 		x=df['TimeStampID'],
@@ -35,6 +28,8 @@ def create_plot(feature, ticker):
 		name='RSi',
 		yaxis='y'
 	) 
+
+	import pdb; pdb.set_trace()  # breakpoint 6302341d //
 
 	data = [trace_price, trace_rsi]
 	data = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
@@ -81,7 +76,7 @@ def refactor_to_ohlc(df, currency_type, candlestick_window=50):
 	dff = df.groupby('candle_num')['TimeStampID', 'Price_{}'.format(
 		currency_type)].max()
 	dff.rename(columns={
-		'TimeStampID': 'TimeStamp',
+		# 'TimeStampID': 'TimeStamp',
 		'Price_{}'.format(currency_type): 'High'},
 		inplace=True)
 	dff['Low'] = df.groupby('candle_num')['Price_{}'.format(currency_type)].min()

@@ -1,7 +1,8 @@
 base_colors = {
 'white': '#FFFFFF',
 'grey': '#777777',
-'black': '#000000'
+'black': '#000000',
+'lightgrey': 'lightgrey'
 }
 
 colors = {
@@ -11,14 +12,15 @@ colors = {
 	'volume_fill': 'rgba(25,280,255,0.5)',
 	'sma_line': '#11FFCC',
 	'lma_line': '#FFA500',
-	'title_font': base_colors['white'],
+	'titlefont': base_colors['white'],
 	'transparent': 'rgba(0,0,0,0)',
 	'legend_bg': base_colors['grey'],
 	'candlestick': {
 		'increasing': '#FFFF00',
 		'decreasing': '#3D00FF'
 	},
-	'rsi': '#00ffe8'
+	'rsi': '#00ffe8',
+	'gridcolor': base_colors['grey']
 	
 }
 
@@ -28,10 +30,10 @@ axis_label_font = {
     'color': 'lightgrey'
 }
 
-tick_font = {
+tickfont = {
 	'family': 'Old Standard TT, serif',
     'size': 14,
-    'color': 'lightgrey'
+    'color': base_colors['lightgrey']
 }
 
 graph_layout = {
@@ -41,5 +43,18 @@ graph_layout = {
 		't': 25, 
 		'r': 0
 	},
-	'tickangle': -30,
+	'width': 600,
+	'xaxis': {
+		'title': 'Date',
+		'titlefont': {
+			'family': 'verdana',
+			'size': 12,
+			'color': colors['titlefont']
+		},
+		'color': colors['titlefont'],
+		'tickangle': -30,
+		'tickfont': tickfont,
+		'gridcolor': base_colors['lightgrey'],
+		# 'rangeslider': {'visible': False},
+	}
 }
