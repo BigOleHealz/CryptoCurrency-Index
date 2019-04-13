@@ -16,7 +16,11 @@ class BigOlDB:
 
 	def __init__(self):
 		logging.info("Initializing Big Ol DB")
-		self.db, self.cursor = self.db_connect()
+		try:
+			self.db, self.cursor = self.db_connect()
+			logging.info("Connected to DB successfully")
+		except Exception as e:
+			logging.info("Failed to connect to DB \\t Error: {}".format(e))
 
 	def db_connect(self):
 		logging.info("Connecting to DB")

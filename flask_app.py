@@ -1,88 +1,54 @@
-from flask import Flask, render_template, url_for, flash, redirect, session, g
+from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm, LoginForm
 from big_ol_db import BigOlDB
-from flask_nav import Nav
-from flask_nav.elements import Navbar, Subgroup, View, Link, Separator, Text
-from datetime import datetime
 import pymysql, hashlib, pandas as pd, logging, static.flash_messages as fl_mes
-import random
+
+import graph_functions as gf
+import numpy as np, json, plotly
+import plotly.graph_objs as go
+
 
 app = Flask(__name__)
-
-nav = Nav(app)
-
-nav.register_element('my_navbar', Navbar('thenav',
-	View('Home Page', 'index'),
-	View('Item One', 'item', item=1),
-	Link('Google', 'https://www.google.com'),
-	Separator(),
-	Text('Here is some Text'),
-	Subgroup('Extras',
-		Link('yahoo', 'https://www.yahoo.com'),
-		View('Index', 'index'))
-		))
 
 
 app.secret_key = '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
 
 bodb = BigOlDB()
+coins = bodb.get_supported_coins()
+
 
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html')
+	return render_template('home.html')
 
 @app.route("/about")
 def about():
-    return render_template('about.html', title='about')
+	return render_template('about.html', title='about')
 
-@app.route('/')
+
+
+
+
+
+@app.route('/dashboard')
 def index():
-	return render_template('index.html')
+	feature = 'BTC'
+	
+	figure = gf.create_plot(feature)
 
-@app.route('/items/<item>')
-def item(item):
-	return '<h1>THE ITEM PAGE!!! THE ITEM IS: {}.'.format(item)
 
-# @app.before_request
-# def before_request():
-# 	g.user = None
-# 	if "user" in session:
-# 		g.user = session["user"]
+	return render_template('dashboard.html', plot=figure['data'], layout=figure['layout'], coins=coins['Ticker'])
 
 
 
-# @app.route("/", methods=["GET", "POST"])
-# def index():
-# 	if request.method == "POST":
-# 		session.pop("user", None)
-# 		if request.form["password"] == "password":
-# 			session['user'] = request.form["username"]
-# 			return redirect(url_for("protected"))
-# 	return render_template('index.html')
+@app.route('/bar', methods=['GET', 'POST'])
+def change_features():
+	ticker='BTC'
+	feature = request.args['selected']
+	graphJSON= gf.create_plot(feature, ticker)
 
-# @app.route("/protected")
-# def protected():
-# 	return render_template("protected.html")
-
-# @app.route("/getsession")
-# def get_session():
-# 	if "user" in session:
-# 		return session['user']
-# 	return "Not logged in!"
-
-# @app.route("/dropsession")
-# def drop_session():
-# 	session.pop("user", None)
-# 	return "Dropped!"
-
-
-
-
-
-
-
-
+	return graphJSON
 
 
 
@@ -125,5 +91,5 @@ def login():
 
 
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(debug=True, port=8050)
 
