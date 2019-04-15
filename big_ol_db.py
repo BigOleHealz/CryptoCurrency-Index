@@ -73,6 +73,15 @@ class BigOlDB:
 
 		return df
 
+	def get_supported_sectors(self):
+		sql = "SELECT * FROM sectors"
+		self.cursor.execute(sql)
+		df = pd.DataFrame(list(self.cursor.fetchall()), columns=["SectorTicker", 
+			"SectorName", "Multiplier"])
+
+		return df
+
+
 	def get_minutely_coin_data(self, ticker):
 		sql = "SELECT TimeStampID, Price_USD, Price_BTC, MarketCap_USD, \
 			Volume24hr_USD FROM	minutely_data WHERE Ticker = '{}'".format(ticker)

@@ -80,25 +80,17 @@ graph_layout = {
 	'grid': {'rows': 5},
 	'xaxis': {
 		'title': 'Date',
-		'titlefont': {
-			'family': 'verdana',
-			'size': 12,
-			'color': colors['titlefont']
-		},
+		'titlefont': tickfont,
 		'color': colors['titlefont'],
 		'tickangle': tickangle,
 		'tickfont': tickfont,
 		'gridcolor': base_colors['grey'],
-		'rangeslider': {'visible': False},
+		'rangeslider': {'visible': True},
 		'gridcolor': colors['gridcolor'],
 	},
 	'yaxis': {
 		'title': 'Volume',
-		'titlefont': {
-			'family': 'verdana',
-			'size': 8,
-			'color': colors['titlefont']
-		},
+		'titlefont': tickfont,
 		'color': colors['titlefont'],
 		'gridcolor': colors['gridcolor'],
 		'tickangle': tickangle,
@@ -107,6 +99,32 @@ graph_layout = {
 		'domain':[0, vals.domains['y2_bottom'] - vals.domains['padding']],
 		'anchor': 'y3'
 	},
+
+	'yaxis2': {
+		'title': 'Price USD',
+		'titlefont': tickfont,
+		'color': colors['titlefont'],
+		'gridcolor': colors['gridcolor'],
+		'tickangle': tickangle,
+		'tickcolor': colors['background'],
+		'tickfont': tickfont,
+		'domain': [vals.domains['y2_bottom'], vals.domains['y2_top']], 
+		'anchor': 'y2'
+	},
+	
+	'yaxis3': {
+		'title': 'RSi',
+		'titlefont': tickfont,
+		'color': colors['titlefont'],
+		'gridcolor': colors['gridcolor'],
+		'tickangle': tickangle,
+		'tickcolor': colors['background'], 
+		'tickfont': tickfont,
+		'domain':[vals.domains['y2_top'] + vals.domains['padding'], 1],
+		'range': [-5, 105],
+		'zeroline': False
+	}
+
 
 }
 

@@ -316,3 +316,10 @@ body {
   background: black !important;
   color: white !important;
 }
+
+/*select.form-control {
+  color: black;
+  background-color: black;
+  background: black;
+  border-right-color: blue;
+}*/
