@@ -4,7 +4,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
-from constants import style_dicts
+from styles import style_dicts
 import aggregator_functions as agg
 from big_ol_db import BigOlDB
 from argparse import ArgumentParser
@@ -73,8 +73,7 @@ def update_graph(ticker, currency_type, requested_mas, candlestick):
 
     quotes = bodb.get_minutely_coin_data(ticker)
 
-    fig = agg.get_fig(ticker, quotes, currency_type, requested_mas, 
-                    candlestick=candlestick, short_window=60, long_window=200)
+    fig = agg.get_fig(quotes, currency_type, requested_mas, short_window=60, long_window=200)
 
     return fig
 

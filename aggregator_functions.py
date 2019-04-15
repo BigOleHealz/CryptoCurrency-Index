@@ -11,7 +11,7 @@ def movingAverage(values, window):
 	return arr_avg
 
 ##### SLOPPY #####
-def get_fig(df, currency_type, requested_mas, short_window=25, long_window=70):
+def get_fig(df, currency_type, requested_mas, short_window, long_window):
 
 	trace_price = go.Scatter(
 				x=df['TimeStampID'],
