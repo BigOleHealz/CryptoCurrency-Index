@@ -10,8 +10,10 @@ from aggregator_functions import AggregatorFunctions as agg
 from big_ol_db import BigOlDB
 from argparse import ArgumentParser
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-app.css.append_css({'external_url': 'https://codepen.io/plotly/pen/YeqjLb.css'})
+
+external_stylesheets = [dbc.themes.BOOTSTRAP, 
+	'https://codepen.io/plotly/pen/YeqjLb.css']
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 bodb = BigOlDB()
 df_supported_coins = bodb.get_supported_coins()
@@ -46,8 +48,9 @@ app.layout = html.Div([
 				className='dropdown',
 				options=[{'label': row["Ticker"], 'value': row["Ticker"]} \
 					for i, row in df_supported_coins.iterrows()],
-				value='BTC'
-			)]),
+				value='BTC')],
+			style={
+				'fontColor': 'blue'}),
 		html.Div([
 			dcc.RadioItems(
 				id='currency-type',
