@@ -5,7 +5,7 @@ import plotly.graph_objs as go
 import dash_core_components as dcc
 from plotly import tools
 from big_ol_db import BigOlDB
-from constants import style_dicts as styles, value_dicts as vals
+from styles import style_dicts as styles, value_dicts as vals
 
 
 class AggregatorFunctions:
@@ -61,7 +61,7 @@ class AggregatorFunctions:
 	def get_fig(self, ticker, currency_type, requested_mas, candlestick, 
 				short_window=25, long_window=70):
 		
-		fig = tools.make_subplots(rows=4, cols=1, specs=[[{}], [{}], [{}], [{}]], 
+		fig = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]], 
 							  shared_xaxes=True, shared_yaxes=False,
 							  vertical_spacing=0.001)
 		if ticker != self.ticker:
@@ -75,7 +75,7 @@ class AggregatorFunctions:
 					mode='lines',
 					line={
 						'color': styles.colors['rsi'],
-						'width': styles.graph_layout['line_width']['rsi']
+						'width': 8
 						},
 					name='RSi',
 					yaxis='y',

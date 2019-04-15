@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 import dash
 import dash_core_components as dcc
-import dash_bootstrap_components as dbc
 import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
-from styles import style_dicts as styles, value_dicts as vals
+import styles.style_dicts as styles
 from aggregator_functions import AggregatorFunctions as agg
 from big_ol_db import BigOlDB
 from argparse import ArgumentParser
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-app.css.append_css({'external_url': 'https://codepen.io/plotly/pen/YeqjLb.css'})
+app = dash.Dash(__name__)
 
 bodb = BigOlDB()
 df_supported_coins = bodb.get_supported_coins()
@@ -19,25 +17,6 @@ df_supported_coins = bodb.get_supported_coins()
 graph = agg()
 
 app.layout = html.Div([
-	dbc.NavbarSimple(
-		children=[
-			dbc.NavItem(dbc.NavLink("Link", href="#")),
-			dbc.DropdownMenu(
-				nav=True,
-				in_navbar=True,
-				label="Menu",
-				children=[
-					dbc.DropdownMenuItem(coin) for coin in df_supported_coins['Ticker']
-					# dbc.DropdownMenuItem(divider=True),
-					# dbc.DropdownMenuItem("Entry 3"),
-				],
-			),
-		],
-		brand="Demo",
-		brand_href="#",
-		sticky="top",
-	),
-
 	html.Div([
 
 		html.Div([
@@ -97,8 +76,6 @@ def update_graph(ticker, currency_type, requested_mas, candlestick, candlestick_
 	fig = graph.get_fig(ticker, currency_type, requested_mas, 
 					candlestick=True, short_window=60, long_window=200)
 
-
-
 	fig['layout'].update(
 		title=ticker,
 		font={
@@ -133,7 +110,7 @@ def update_graph(ticker, currency_type, requested_mas, candlestick, candlestick_
 			'rangeslider': {'visible': False},
 			'gridcolor': styles.colors['gridcolor'],
 			'rangeselector': {
-				'buttons': vals.range_selector_buttons['buttons']},
+				'buttons': styles.range_selector_buttons['buttons']},
 			},
 		yaxis3={
 			'title': 'RSi',
@@ -147,7 +124,8 @@ def update_graph(ticker, currency_type, requested_mas, candlestick, candlestick_
 			'tickangle': styles.graph_layout['tickangle'],
 			'tickcolor': styles.colors['background'], 
 			'tickfont': styles.graph_layout['tickfont'],
-			'domain':[vals.domains['y2_top'] + vals.domains['padding'], 1],
+			'domain':[styles.graph_layout['domains']['y2_top'] + \
+				styles.graph_layout['domains']['padding'], 1],
 			'range': [-5, 105],
 			'zeroline': False},			
 		yaxis2={
@@ -162,7 +140,8 @@ def update_graph(ticker, currency_type, requested_mas, candlestick, candlestick_
 			'tickangle': styles.graph_layout['tickangle'],
 			'tickcolor': styles.colors['background'],
 			'tickfont': styles.graph_layout['tickfont'],
-			'domain': [vals.domains['y2_bottom'], vals.domains['y2_top']], 
+			'domain':[styles.graph_layout['domains']['y2_bottom'], 
+				styles.graph_layout['domains']['y2_top']], 
 			'anchor': 'y2'},
 		yaxis={
 			'title': 'Volume',
@@ -176,10 +155,10 @@ def update_graph(ticker, currency_type, requested_mas, candlestick, candlestick_
 			'tickangle': styles.graph_layout['tickangle'],
 			'tickcolor': styles.colors['background'], 
 			'tickfont': styles.graph_layout['tickfont'],
-			'domain':[0, vals.domains['y2_bottom'] - vals.domains['padding']], 
+			'domain':[0, styles.graph_layout['domains']['y2_bottom'] - \
+				styles.graph_layout['domains']['padding']], 
 			'anchor': 'y3'}
 		),
-
 
 	return fig
 

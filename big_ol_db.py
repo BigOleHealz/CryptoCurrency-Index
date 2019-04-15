@@ -9,7 +9,7 @@ import pandas as pd
 from datetime import datetime
 from pandas.io.json import json_normalize
 import logging
-import credentials
+from credentials import credentials
 
 pd.set_option('display.max_rows', 100)
 pd.set_option('display.max_columns', 500)
@@ -24,7 +24,7 @@ class BigOlDB:
 	def db_connect(self):
 		logging.info("Connecting to DB")
 
-		cred = credentials.credentials_dict
+		cred = credentials
 
 		endpoint =  cred['endpoint']
 		username = cred['username']
