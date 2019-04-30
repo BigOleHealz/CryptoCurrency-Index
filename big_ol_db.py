@@ -87,7 +87,14 @@ class BigOlDB:
 		df = pd.DataFrame(list(self.cursor.fetchall()), columns=["TimeStampID",
 			"Price_USD", "Price_BTC", "MarketCap_USD", "Volume24hr_USD"])
 
-		return df	
+		return df
+
+	def get_coins_in_sector(self, ticker):
+		sql = f"""SELECT Ticker FROM coinindexcap.coins WHERE Sector = '{ticker}'"""
+		self.cursor.execute(sql)
+		
+		return [elem[0] for elem in self.cursor.fetchall()]
+
 
 	### MUST BE UPGRADED AND DELETED ###
 	def sql_insert_to_minutely(self, dff):
@@ -119,11 +126,24 @@ class BigOlDB:
 				pass
 
 	def get_multipliers(self):
-		sql = "SELECT sectorTicker, multiplier FROM sectors"
+		sql = """SELECT sectorTicker, multiplier_mktcap, multiplier_volume
+			FROM sectors"""
 		self.cursor.execute(sql)
 		result = pd.DataFrame(list(self.cursor.fetchall()), columns=[
-			"SectorTicker", "Multiplier"])
+			"SectorTicker", "Multiplier_MktCap", "Multiplier_Volume"])
 		
+		return result
+
+	def get_sector_multiplier(self, ticker):
+		sql = f"""SELECT multiplier_mktcap, multiplier_volume FROM 
+			coinindexcap.sectors WHERE sectorTicker = '{ticker}';"""
+		self.cursor.execute(sql)
+
+
+		result = pd.DataFrame(list(self.cursor.fetchall()), columns=[
+			"Multiplier_MktCap", "Multiplier_Volume"])
+		
+
 		return result
 
 	def sql_update_minutely_table(self):
@@ -206,3 +226,7 @@ class BigOlDB:
 			return True
 		except Exception as e:
 			return e
+
+
+# bodb = BigOlDB()
+# print(bodb.get_coins_in_sector('XPA'))
