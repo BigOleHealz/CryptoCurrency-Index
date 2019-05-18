@@ -81,13 +81,27 @@ class BigOlDB:
 		return df
 
 	def get_minutely_coin_data(self, ticker):
-		sql = "SELECT TimeStampID, Price_USD, Price_BTC, MarketCap_USD, \
-			Volume24hr_USD FROM	minutely_data WHERE Ticker = '{}'".format(ticker)
+		sql = f"""SELECT TimeStampID, Price_USD, Price_BTC, MarketCap_USD, 
+			Volume24hr_USD FROM	minutely_data WHERE Ticker = '{ticker}' 
+			AND TimeStampID > '2019-01-20 00:00:00';"""
 		self.cursor.execute(sql)
 		df = pd.DataFrame(list(self.cursor.fetchall()), columns=["TimeStampID",
 			"Price_USD", "Price_BTC", "MarketCap_USD", "Volume24hr_USD"])
 
 		return df
+
+	def get_minutely_sector_data(self, ticker):
+		sql = f"""SELECT TimeStampID, MarketCap_Weighted, Volume_Weighted FROM 
+			coinindexcap.sector_minutely_data WHERE Ticker = '{ticker}';"""
+		self.cursor.execute(sql)
+		df = pd.DataFrame(list(self.cursor.fetchall()), columns=["TimeStampID",
+			"MarketCap_Weighted", "Volume_Weighted"])
+
+		df["MarketCap_Weighted"] = df["MarketCap_Weighted"].apply(lambda x: json.loads(x))
+		df["Volume_Weighted"] = df["Volume_Weighted"].apply(lambda x: json.loads(x))
+
+		return df
+
 
 	def get_coins_in_sector(self, ticker):
 		sql = f"""SELECT Ticker FROM coinindexcap.coins WHERE Sector = '{ticker}'"""
@@ -192,8 +206,6 @@ class BigOlDB:
 			return fl_mes.username_already_exists
 		else:
 			return False
-
-
 
 	def validate_user(self, email, password):
 		hashed_password = hashlib.md5(password.encode()).hexdigest()
