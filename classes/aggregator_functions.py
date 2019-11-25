@@ -4,7 +4,7 @@ import numpy as np
 import plotly.graph_objs as go
 import dash_core_components as dcc
 from plotly import tools
-from big_ol_db import BigOlDB
+from classes.big_ol_db import BigOlDB
 from styles import style_dicts as styles, value_dicts as vals
 
 
