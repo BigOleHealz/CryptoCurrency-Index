@@ -58,17 +58,17 @@ insert_coin_history = """
 
 get_sector_mktcap_from_minutely_data = """
 	SELECT 
-	    a.TimeStampID,
+		a.TimeStampID,
 		SUM(SQRT(a.MarketCap_USD)),
-	    SUM(a.Volume24hr_USD),
-	    b.sector_ticker
+		SUM(a.Volume24hr_USD),
+		b.sector_ticker
 	FROM
-	    coinindexcap.minutely_data AS a
-	        LEFT JOIN
-	    (SELECT 
-	        coin_ticker, sector_ticker
-	    FROM
-	        coinindexcap.coins) AS b ON a.Ticker = b.coin_ticker
+		coinindexcap.minutely_data AS a
+			LEFT JOIN
+		(SELECT 
+			coin_ticker, sector_ticker
+		FROM
+			coinindexcap.coins) AS b ON a.Ticker = b.coin_ticker
 	WHERE b.sector_ticker = '{sctr}'
 	GROUP BY a.TimeStampID , b.sector_ticker
 	ORDER BY a.TimeStampID;
@@ -83,5 +83,26 @@ get_coin_sector = """
 get_coins_in_sector = """
 	SELECT coin_ticker 
 	FROM coinindexcap.coins 
-	WHERE sector_ticker = '{sctr}
+	WHERE sector_ticker = '{sctr}'
+"""
+
+populate_sector_from_coins = """
+	INSERT coinindexcap.sector_minutely_data 
+		SELECT * FROM 
+			(SELECT
+				'NULL',
+				a.TimeStampID AS timestampid,
+				SUM(SQRT(a.MarketCap_USD)) AS marketcap_usd,
+				SUM(a.Volume24hr_USD) AS volume24hr_usd,
+				b.sector_ticker AS sector_ticker
+			FROM coinindexcap.minutely_data AS a
+			LEFT JOIN
+				(SELECT coin_ticker, sector_ticker
+				FROM coinindexcap.coins)
+				AS b ON a.Ticker = b.coin_ticker
+				-- WHERE b.sector_ticker = '{sctr}'
+				GROUP BY
+					a.TimeStampID, 
+					b.sector_ticker
+				ORDER BY a.TimeStampID) AS c;
 	"""
