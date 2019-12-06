@@ -6,8 +6,8 @@ from classes.sector import Sector
 # df = bodb.insert_coin(ticker='DASH', name="Dash", sector="XPR")
 # df = bodb.insert_coin(ticker='XRP', name="Ripple", sector="XPR")
 # df = bodb.get_historical_quotes('BTC')
-# bodb.update_minutely_table()
+bodb.update_minutely_table()
 
-sector = Sector('XPR')
-coins = sector.populate_sector()
+# sector = Sector('XPR')
+# bodb.insert_coin(ticker='XRP', name='Ripple', sector='XPR')
 import pdb; pdb.set_trace()  # breakpoint a607b05b //

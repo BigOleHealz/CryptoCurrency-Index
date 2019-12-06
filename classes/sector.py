@@ -23,10 +23,8 @@ class Sector:
 		return [elem[0] for elem in list(cursor.fetchall())]
 
 	def populate_sector(self):
-s		sql = queries.populate_sector_from_coins.format(sctr=self.sector)
+		sql = queries.populate_sector_from_coins.format(sctr=self.sector)
 		db, cursor = util.db_connect()
-
-		import pdb; pdb.set_trace()  # breakpoint f48268b4 //
 
 		cursor.execute(sql)
 		db.commit()

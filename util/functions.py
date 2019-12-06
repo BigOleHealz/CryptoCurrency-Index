@@ -2,17 +2,14 @@ import logging
 from cryptocmd import CmcScraper
 import pandas as pd, sqlparse, pymysql
 from static.credentials import db_creds
+from pypika import Query, Table
 
-def df_to_sql_minutely(table_name, df):
-	sql = "INSERT IGNORE INTO coinindexcap.{tbl} VALUES ".format(tbl=table_name)
+def df_to_sql(table, df):
+	customers = Table(f'{table}_tmp')
 
-	for i, row in df.iterrows():
-		sql += "(null, '{tkr}', '{ts}', '{pusd}', null, '{mktcp}', '{vlm}')".format(
-			tkr=row['Ticker'], ts=row['TimeStampID'], pusd=row['Price_USD'], mktcp=row['MarketCap_USD'], vlm=row['Volume24hr_USD'])
-		
-		if i != len(df) - 1: sql += ','
-		else: sql += ';'
-
+	sql = Query.into(f'coinindexcap.{table}_tmp').insert(
+		[tuple(row) for i, row in df.iterrows()])
+	sql = str(sql).replace('"', '') + ';'
 	return sql
 
 def execute_sql(statement: str, commit=True):
@@ -20,13 +17,11 @@ def execute_sql(statement: str, commit=True):
 			db_creds['password'], db_creds['dbname'])
 	cursor = db.cursor()
 
-	try:
-		for stmnt in sqlparse.split(statement):
-			cursor.execute(stmnt)
-		if commit: db.commit()
-		return list(cursor.fetchall())
-	except Exception as e:
-		return e
+	for stmnt in sqlparse.split(statement):
+		cursor.execute(stmnt)
+		import pdb; pdb.set_trace()  # breakpoint 1379f991 //
+
+	if commit: db.commit()
 
 def db_connect():
 	logging.info('Attempting to connect to DB')

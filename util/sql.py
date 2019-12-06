@@ -46,13 +46,12 @@ insert_coin = """
 drop_table = "DROP TABLE IF EXISTS {tbl};"
 
 insert_coin_history = """
-	DROP TABLE IF EXISTS coinindexcap.tmp_tbl_minutely;
-	DROP TABLE IF EXISTS coinindexcap.old_tbl_delete;""" + """
-	CREATE TABLE coinindexcap.tmp_tbl_minutely LIKE coinindexcap.minutely_data;
-	INSERT coinindexcap.tmp_tbl_minutely SELECT * FROM coinindexcap.minutely_data;
+	DROP TABLE IF EXISTS coinindexcap.minutely_data_tmp, coinindexcap.old_tbl_delete;""" + """
+	CREATE TABLE coinindexcap.minutely_data_tmp LIKE coinindexcap.minutely_data;
+	INSERT coinindexcap.minutely_data_tmp SELECT * FROM coinindexcap.minutely_data;
 	{upsrt}
 	RENAME TABLE coinindexcap.minutely_data TO coinindexcap.old_tbl_delete,
-		coinindexcap.tmp_tbl_minutely TO coinindexcap.minutely_data;
+		coinindexcap.minutely_data_tmp TO coinindexcap.minutely_data;
 	DROP TABLE coinindexcap.old_tbl_delete;
 	"""
 
@@ -84,10 +83,12 @@ get_coins_in_sector = """
 	SELECT coin_ticker 
 	FROM coinindexcap.coins 
 	WHERE sector_ticker = '{sctr}'
-"""
+	"""
 
 populate_sector_from_coins = """
-	INSERT coinindexcap.sector_minutely_data 
+	DROP TABLE IF EXISTS coinindexcap.sector_minutely_data_tmp, coinindexcap.old_tbl_delete;""" + """
+	CREATE TABLE coinindexcap.sector_minutely_data_tmp LIKE coinindexcap.sector_minutely_data;
+	INSERT coinindexcap.sector_minutely_data_tmp 
 		SELECT * FROM 
 			(SELECT
 				'NULL',
@@ -100,9 +101,41 @@ populate_sector_from_coins = """
 				(SELECT coin_ticker, sector_ticker
 				FROM coinindexcap.coins)
 				AS b ON a.Ticker = b.coin_ticker
-				-- WHERE b.sector_ticker = '{sctr}'
+				-- WHERE b.sector_ticker = '{sctr}' 
 				GROUP BY
 					a.TimeStampID, 
 					b.sector_ticker
 				ORDER BY a.TimeStampID) AS c;
+	RENAME TABLE coinindexcap.sector_minutely_data TO coinindexcap.old_tbl_delete,
+		coinindexcap.sector_minutely_data_tmp TO coinindexcap.sector_minutely_data;
+	DROP TABLE coinindexcap.old_tbl_delete;
+	"""
+
+update_sector_table = """
+	DROP TABLE IF EXISTS coinindexcap.sector_minutely_data_tmp, coinindexcap.old_tbl_delete;""" + """
+	CREATE TABLE coinindexcap.sector_minutely_data_tmp LIKE coinindexcap.sector_minutely_data;
+	INSERT coinindexcap.sector_minutely_data_tmp SELECT * FROM coinindexcap.sector_minutely_data;
+	SELECT 
+	    'NULL',
+	    m.TimeStampID AS timestampid,
+		SUM(SQRT(m.MarketCap_USD)) AS marketcap_usd,
+	    SUM(m.Volume24hr_USD) AS volume24hr_usd,
+	    c.sector_ticker AS sector_ticker
+	FROM
+	    coinindexcap.minutely_data AS m
+	        LEFT JOIN
+	    (SELECT 
+	        coin_ticker, sector_ticker
+	    FROM
+	        coinindexcap.coins) AS c ON m.Ticker = c.coin_ticker
+	WHERE
+	    m.TimeStampID > (SELECT 
+	            MAX(s.timestampid) AS timestampid
+	        FROM
+	            coinindexcap.sector_minutely_data AS s)
+	GROUP BY m.TimeStampID,
+		c.sector_ticker;
+	RENAME TABLE coinindexcap.sector_minutely_data TO coinindexcap.old_tbl_delete,
+			coinindexcap.sector_minutely_data_tmp TO coinindexcap.sector_minutely_data;
+	DROP TABLE coinindexcap.old_tbl_delete;
 	"""

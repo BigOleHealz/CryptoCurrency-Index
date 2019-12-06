@@ -39,7 +39,7 @@ class BigOlDB:
 	@classmethod
 	def get_supported_coins(cls) -> pd.DataFrame:
 		sql = queries.get_supported_coins
-		db, cursor = cls.db_connect()
+		db, cursor = util.db_connect()
 		cursor.execute(sql)
 		df = pd.DataFrame(list(cursor.fetchall()), columns=[
 			"coin_ticker", "coin_name", "sector"])
@@ -48,8 +48,8 @@ class BigOlDB:
 	@classmethod
 	def insert_coin_history_to_db(cls, df, commit=True):
 		ticker = df.iloc[0]['Ticker']
-		sql = queries.insert_coin_history.format(upsrt=util.df_to_sql_minutely(
-			'tmp_tbl_minutely', df))
+		sql = queries.insert_coin_history.format(upsrt=util.df_to_sql(
+			'minutely_data', df))
 		return util.execute_sql(sql, commit=commit)
 
 	@classmethod
@@ -60,21 +60,21 @@ class BigOlDB:
 		df = coin.get_historical_quotes()
 		sql_coin = queries.insert_coin.format(tkr=ticker, nm=name, sctr=sector)
 
-		try:
-			util.execute_sql(sql_coin, commit=False)
-			cls.insert_coin_history_to_db(df, commit=False)
-			db.commit()
-		except Exception as e:
-			print("Error:", e)
+		util.execute_sql(sql_coin, commit=False)
+		cls.insert_coin_history_to_db(df, commit=False)
+		db.commit()
 
 	@classmethod
 	def update_minutely_table(cls):
 		df_updated = cls.get_updated_quotes(quote_limit=100)
-
 		supported_coins = list(cls.get_supported_coins()["coin_ticker"])
-		df_updated = df_updated[df_updated["Ticker"].isin(supported_coins)].reset_index(drop=True)
-		sql = queries.insert_coin_history.format(upsrt=util.df_to_sql_minutely(
-			'tmp_tbl_minutely', df_updated))
+		df_updated = df_updated[df_updated["Ticker"].isin(
+			supported_coins)].reset_index(drop=True)
+		df_updated['_id'] = df_updated['Price_BTC'] = 'null'
+
+		df_updated['TimeStampID'] = pd.to_datetime(df_updated['TimeStampID'])
+		sql = queries.insert_coin_history.format(upsrt=util.df_to_sql(
+			'minutely_data', df_updated))
 		util.execute_sql(sql, commit=True)
 
 
