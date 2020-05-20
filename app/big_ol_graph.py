@@ -153,6 +153,3 @@ def graphData(ticker, MA1, MA2):
 	plt.show()
 
 graphData(ticker, sma_short, sma_long)
-		
-
-

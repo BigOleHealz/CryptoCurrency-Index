@@ -1,8 +1,4 @@
-
 from classes.big_ol_db import BigOlDB
-
-
-
 
 def insert_coin_history_to_db(df):
 	ticker = df.iloc[0]['Ticker']

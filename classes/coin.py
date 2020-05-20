@@ -36,6 +36,3 @@ class Coin:
 		cursor.execute(sql)
 		
 		return cursor.fetchall()[0][0]
-
-
-

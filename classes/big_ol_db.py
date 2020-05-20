@@ -10,12 +10,10 @@ from classes.coin import Coin
 
 set_configs(__file__)
 
-
 class BigOlDB:
 
-	# def __init__(self):
-	# 	logging.info("Initializing Big Ol DB")
-	# 	self.db, self.cursor = self.db_connect()
+	def __init__(self):
+		logging.info("Initializing Big Ol DB")
 
 	@staticmethod
 	def get_updated_quotes(quote_limit=10) -> pd.DataFrame:
@@ -76,6 +74,3 @@ class BigOlDB:
 		sql = queries.insert_coin_history.format(upsrt=util.df_to_sql(
 			'minutely_data', df_updated))
 		util.execute_sql(sql, commit=True)
-
-
-

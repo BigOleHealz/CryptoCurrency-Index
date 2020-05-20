@@ -11,9 +11,8 @@ set_configs(__file__)
 
 class BigOlDB:
 
-	# def __init__(self):
-	# 	logging.info("Initializing Big Ol DB")
-	# 	self.db, self.cursor = self.db_connect()
+	def __init__(self):
+		logging.info("Initializing Big Ol DB")
 
 	@staticmethod
 	def db_connect():
@@ -69,5 +68,3 @@ class BigOlDB:
 if __name__ == "__main__":
 
 	coins = BigOlDB.get_minutely_coin_data('ETH')
-	
-	import pdb; pdb.set_trace()  # breakpoint 6a54cd68 //

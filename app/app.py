@@ -96,9 +96,6 @@ def update_graph(ticker, currency_type, requested_mas, candlestick, candlestick_
 
 	fig = graph.get_fig(ticker, currency_type, requested_mas, 
 					candlestick=True, short_window=60, long_window=200)
-
-
-
 	fig['layout'].update(
 		title=ticker,
 		font={

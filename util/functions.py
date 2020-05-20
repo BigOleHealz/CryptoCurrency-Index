@@ -19,9 +19,8 @@ def execute_sql(statement: str, commit=True):
 
 	for stmnt in sqlparse.split(statement):
 		cursor.execute(stmnt)
-		import pdb; pdb.set_trace()  # breakpoint 1379f991 //
-
-	if commit: db.commit()
+	if commit:
+		db.commit()
 
 def db_connect():
 	logging.info('Attempting to connect to DB')

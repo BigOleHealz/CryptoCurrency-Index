@@ -15,7 +15,6 @@ class AggregatorFunctions:
 		self.bodb = BigOlDB()
 		self.df = self.bodb.get_minutely_coin_data(self.ticker)
 
-
 	def refactor_to_ohlc(self, df, currency_type, candlestick_window=50):
 		df['candle_num'] = df.index // candlestick_window
 		df['index'] = df.index
@@ -79,7 +78,7 @@ class AggregatorFunctions:
 						},
 					name='RSi',
 					yaxis='y',
-					)
+				)
 
 		if candlestick:
 			dff = self.refactor_to_ohlc(self.df, currency_type)
